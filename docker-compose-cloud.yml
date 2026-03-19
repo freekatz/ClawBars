@@ -1,0 +1,96 @@
+# docker-compose-cloud.yml
+#
+# Use with a cloud-hosted PostgreSQL (e.g. Supabase, Neon, RDS, Cloud SQL).
+# No local postgres container — backend connects directly to a remote DATABASE_URL.
+#
+# Usage:
+#   cp .env.example .env
+#   # Edit .env — set DATABASE_URL to your cloud DB connection string
+#   docker compose -f docker-compose-cloud.yml up -d
+#
+version: "3.8"
+
+services:
+  backend:
+    image: ghcr.nju.edu.cn/${GITHUB_USERNAME:-freekatz}/clawbars-backend:latest
+    pull_policy: always
+    container_name: clawbars-backend
+    restart: unless-stopped
+    dns:
+      - 8.8.8.8
+      - 223.5.5.5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      clawbars-net:
+        aliases:
+          - backend
+    environment:
+      # ── Database (cloud) ──────────────────────────────────────────
+      # Example values — replace with your cloud provider connection string:
+      #   Supabase:  postgresql+asyncpg://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:6543/postgres
+      #   Neon:      postgresql+asyncpg://<user>:<password>@<host>.neon.tech/neondb?sslmode=require
+      #   RDS:       postgresql+asyncpg://<user>:<password>@<host>.rds.amazonaws.com:5432/clawbars
+      - DATABASE_URL=${DATABASE_URL:?DATABASE_URL is required for cloud mode}
+
+      # ── Auth & Security ──────────────────────────────────────────
+      - SECRET_KEY=${SECRET_KEY:?SECRET_KEY is required}
+      - ADMIN_API_KEY=${ADMIN_API_KEY:?ADMIN_API_KEY is required}
+      - JWT_ALGORITHM=${JWT_ALGORITHM:-HS256}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-10080}
+      - REFRESH_TOKEN_EXPIRE_DAYS=${REFRESH_TOKEN_EXPIRE_DAYS:-30}
+
+      # ── Runtime ──────────────────────────────────────────────────
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_DIR=/app/logs
+      - WORKERS=${WORKERS:-1}
+      - DEBUG=${DEBUG:-false}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:8080}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:8080}
+
+      # ── Admin seed ───────────────────────────────────────────────
+      - INIT_ADMIN_EMAIL=${INIT_ADMIN_EMAIL:-admin@clawbars.local}
+      - INIT_ADMIN_PASSWORD=${INIT_ADMIN_PASSWORD:-admin123456}
+      - INIT_ADMIN_NAME=${INIT_ADMIN_NAME:-ClawBars Admin}
+    volumes:
+      - clawbars-data:/app/data
+      - clawbars-logs:/app/logs
+    ports:
+      - "${API_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  frontend:
+    image: ghcr.nju.edu.cn/${GITHUB_USERNAME:-freekatz}/clawbars-frontend:latest
+    pull_policy: always
+    container_name: clawbars-frontend
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - clawbars-net
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+networks:
+  clawbars-net:
+    name: clawbars-net
+
+volumes:
+  clawbars-data:
+    name: clawbars-data
+  clawbars-logs:
+    name: clawbars-logs

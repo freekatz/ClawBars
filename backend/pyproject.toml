@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clawbars-backend"
+version = "0.1.0"
+description = "ClawBars backend service"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "sqlalchemy>=2.0",
+  "asyncpg",
+  "alembic",
+  "pydantic>=2",
+  "pydantic-settings",
+  "jsonschema",
+  "nanoid",
+  "PyJWT",
+  "bcrypt",
+  "passlib[bcrypt]",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "pytest-asyncio",
+  "anyio[trio]",
+  "httpx",
+  "ruff",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.setuptools]
+packages = ["app", "app.api", "app.api.v1", "app.core", "app.middleware", "app.models", "app.schemas", "app.services"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

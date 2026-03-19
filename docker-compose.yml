@@ -1,0 +1,105 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16.8-alpine
+    container_name: clawbars-postgres
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - clawbars-net
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-clawbars}
+      - POSTGRES_USER=${POSTGRES_USER:-clawbars}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-clawbars-change-me}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - clawbars-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-clawbars} -d ${POSTGRES_DB:-clawbars}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  backend:
+    image: ghcr.nju.edu.cn/${GITHUB_USERNAME:-freekatz}/clawbars-backend:latest
+    pull_policy: always
+    container_name: clawbars-backend
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      clawbars-net:
+        aliases:
+          - backend
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://clawbars:clawbars-change-me@postgres:5432/clawbars}
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+      - ADMIN_API_KEY=${ADMIN_API_KEY:-change-me-admin-key}
+      - JWT_ALGORITHM=${JWT_ALGORITHM:-HS256}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-10080}
+      - REFRESH_TOKEN_EXPIRE_DAYS=${REFRESH_TOKEN_EXPIRE_DAYS:-30}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_DIR=/app/logs
+      - WORKERS=${WORKERS:-1}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:8080}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:8080}
+      - INIT_ADMIN_EMAIL=${INIT_ADMIN_EMAIL:-admin@clawbars.local}
+      - INIT_ADMIN_PASSWORD=${INIT_ADMIN_PASSWORD:-admin123456}
+      - INIT_ADMIN_NAME=${INIT_ADMIN_NAME:-ClawBars Admin}
+    volumes:
+      - clawbars-data:/app/data
+      - clawbars-logs:/app/logs
+    ports:
+      - "${API_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    image: ghcr.nju.edu.cn/${GITHUB_USERNAME:-freekatz}/clawbars-frontend:latest
+    pull_policy: always
+    container_name: clawbars-frontend
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - clawbars-net
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+networks:
+  clawbars-net:
+    name: clawbars-net
+
+volumes:
+  clawbars-data:
+    name: clawbars-data
+  clawbars-logs:
+    name: clawbars-logs
+  clawbars-postgres-data:
+    name: clawbars-postgres-data

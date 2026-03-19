@@ -1,0 +1,544 @@
+@import "tailwindcss";
+@import "katex/dist/katex.min.css";
+
+/* ============================================
+   ClawBars Design System
+   - Project: AI Agent Intelligence Exchange
+   - Style: Vibrant Flat Design, High Contrast Light Theme
+   - Palette: Stark White, Pitch Black, Vibrant Red, Cyan, Yellow
+   - Inspired by: Neo-brutalism, Modern Flat Design
+   ============================================ */
+
+@theme {
+  /* === Base Colors === */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  /* === Brand Colors === */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-warm: var(--accent-warm);
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+
+  /* === Font Families === */
+  --font-sans:
+    "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", Consolas, monospace;
+
+  /* === Font Sizes (Responsive) === */
+  --text-xs: clamp(0.625rem, 0.6rem + 0.1vw, 0.6875rem);
+  --text-sm: clamp(0.75rem, 0.72rem + 0.12vw, 0.8125rem);
+  --text-base: clamp(0.8125rem, 0.78rem + 0.15vw, 0.875rem);
+  --text-lg: clamp(0.875rem, 0.85rem + 0.15vw, 0.9375rem);
+  --text-xl: clamp(0.9375rem, 0.9rem + 0.2vw, 1.0625rem);
+  --text-2xl: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem);
+  --text-3xl: clamp(1.375rem, 1.2rem + 0.7vw, 1.5rem);
+  --text-4xl: clamp(1.625rem, 1.35rem + 1vw, 1.875rem);
+
+  /* === Spacing Scale === */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  /* === Border Radius === */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+
+  /* === Shadows (Flat) === */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-glow-primary: none;
+  --shadow-glow-secondary: none;
+  --shadow-glow-accent: none;
+
+  /* === Transitions === */
+  --transition-fast: 100ms ease-in-out;
+  --transition-base: 150ms ease-in-out;
+  --transition-slow: 250ms ease-in-out;
+}
+
+/* ============================================
+   Light Theme (Flat & Vibrant)
+   ============================================ */
+@layer base {
+  :root,
+  [data-theme="light"] {
+    /* Background & Foreground */
+    --background: #fdfdfd;
+    --foreground: #111111;
+
+    /* Card & Surface */
+    --card: #ffffff;
+    --card-hover: #f0f0f0;
+    --border: #111111; /* Harsh black borders */
+    --border-hover: #111111;
+
+    /* Muted */
+    --muted: #f4f4f5;
+    --muted-foreground: #52525b;
+
+    /* Brand Colors - High Contrast Clashing Colors */
+    --primary: #ff4757; /* Vibrant Red/Pink */
+    --primary-foreground: #ffffff;
+    --primary-muted: #ffeef0;
+    --primary-hover: #ff6b81;
+
+    --secondary: #1e90ff; /* Bright Blue */
+    --secondary-foreground: #ffffff;
+    --secondary-muted: #ebf5ff;
+    --secondary-hover: #3742fa;
+
+    --accent: #ffa502; /* Vibrant Orange/Yellow */
+    --accent-foreground: #111111;
+    --accent-muted: #fff6e5;
+    --accent-hover: #ff7f50;
+
+    /* Semantic Colors */
+    --destructive: #ff4d4f;
+    --destructive-muted: #fff1f0;
+    --success: #2ed573;
+    --success-muted: #e6fced;
+    --warning: #ffa502;
+    --warning-muted: #fff6e5;
+    --info: #1e90ff;
+    --info-muted: #ebf5ff;
+  }
+
+  [data-theme="dark"] {
+    /* Dark Brutsalism Theme */
+    --background: #05050a;
+    --foreground: #ffffff;
+
+    /* Card & Surface */
+    --card: #111111;
+    --card-hover: #1f1f1f;
+    /* We use bright neon borders or stark white on dark to keep brutalist feel */
+    --border: #333333;
+    --border-hover: #ffffff;
+
+    /* Muted */
+    --muted: #27272a;
+    --muted-foreground: #a1a1aa;
+
+    /* Brand Colors (Dark variants) */
+    --primary: #ff4757; /* Keep the vibrant red against black */
+    --primary-foreground: #ffffff;
+    --primary-muted: rgba(255, 71, 87, 0.1);
+    --primary-hover: #ff6b81;
+
+    --secondary: #1e90ff;
+    --secondary-foreground: #ffffff;
+    --secondary-muted: rgba(30, 144, 255, 0.1);
+    --secondary-hover: #3742fa;
+
+    --accent: #ffa502;
+    --accent-foreground: #111111;
+    --accent-muted: rgba(255, 165, 2, 0.1);
+    --accent-hover: #ff7f50;
+
+    /* Semantic */
+    --destructive: #ff4d4f;
+    --destructive-muted: rgba(255, 77, 79, 0.1);
+    --success: #2ed573;
+    --success-muted: rgba(46, 213, 115, 0.1);
+    --warning: #ffa502;
+    --warning-muted: rgba(255, 165, 2, 0.1);
+    --info: #1e90ff;
+    --info-muted: rgba(30, 144, 255, 0.1);
+  }
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Typography Scale */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    font-size: var(--text-4xl);
+  }
+  h2 {
+    font-size: var(--text-3xl);
+  }
+  h3 {
+    font-size: var(--text-2xl);
+  }
+  h4 {
+    font-size: var(--text-xl);
+  }
+  h5 {
+    font-size: var(--text-lg);
+  }
+  h6 {
+    font-size: var(--text-base);
+    font-weight: 600;
+  }
+
+  /* Code & Mono text */
+  code,
+  pre,
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  /* Focus outline */
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+@layer utilities {
+  /* Flattened Glass Effects -> Just solid backgrounds now */
+  .glass,
+  .glass-glow,
+  .glass-glow-secondary,
+  .glass-glow-accent {
+    background: var(--card);
+    border: 2px solid var(--border);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+  }
+
+  /* Replace Gradients with Solid Colors */
+  .gradient-primary,
+  .animate-gradient {
+    background: var(--primary);
+  }
+
+  .gradient-text {
+    background: none;
+    -webkit-text-fill-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .gradient-border::before {
+    display: none;
+  }
+
+  /* Remove Text Glows */
+  .text-glow-primary,
+  .text-glow-secondary,
+  .text-glow-accent {
+    text-shadow: none;
+  }
+
+  /* Animations - Simplified */
+  @keyframes scroll-ticker {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-scroll-ticker {
+    animation: scroll-ticker 30s linear infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: none; /* Removed for flat design */
+  }
+
+  /* Focus ring */
+  .focus-ring {
+    outline: none;
+  }
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  /* Responsive text helpers */
+  .text-responsive-xs {
+    font-size: var(--text-xs);
+  }
+  .text-responsive-sm {
+    font-size: var(--text-sm);
+  }
+  .text-responsive-base {
+    font-size: var(--text-base);
+  }
+  .text-responsive-lg {
+    font-size: var(--text-lg);
+  }
+  .text-responsive-xl {
+    font-size: var(--text-xl);
+  }
+  .text-responsive-2xl {
+    font-size: var(--text-2xl);
+  }
+  .text-responsive-3xl {
+    font-size: var(--text-3xl);
+  }
+  .text-responsive-4xl {
+    font-size: var(--text-4xl);
+  }
+
+  /* Interactive hover states - Flat color fills */
+  .hover-lift {
+    transition:
+      transform var(--transition-fast),
+      background var(--transition-fast);
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    background: var(--card-hover);
+  }
+
+  .hover-glow {
+    transition: background var(--transition-fast);
+  }
+  .hover-glow:hover {
+    background: var(--primary-muted);
+  }
+
+  /* Scrollbar styling */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: var(--muted);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--border);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ============================================
+   Component Base Styles
+   ============================================ */
+@layer components {
+  /* Card base */
+  .card-base {
+    background: var(--card);
+    border: 2px solid var(--border);
+    transition: background var(--transition-fast);
+  }
+
+  .card-base:hover {
+    background: var(--card-hover);
+  }
+
+  /* Button base */
+  .btn-base {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    border: 2px solid var(--border); /* Thick borders everywhere */
+    transition:
+      background var(--transition-fast),
+      color var(--transition-fast);
+  }
+
+  .btn-base:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  /* Input base */
+  .input-base {
+    width: 100%;
+    background: var(--card);
+    border: 2px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    font-size: var(--text-sm);
+    color: var(--foreground);
+    transition: border-color var(--transition-fast);
+  }
+
+  .input-base::placeholder {
+    color: var(--muted-foreground);
+  }
+
+  .input-base:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--primary-muted);
+  }
+}
+
+/* ============================================
+   Responsive Utilities
+   ============================================ */
+@media (max-width: 640px) {
+  .mobile-text-center {
+    text-align: center;
+  }
+  .mobile-full-width {
+    width: 100%;
+  }
+  .mobile-stack {
+    flex-direction: column;
+  }
+  .mobile-p-compact {
+    padding: 0.75rem;
+  }
+  .mobile-gap-compact {
+    gap: 0.5rem;
+  }
+}
+
+/* ============================================
+   Markdown Body Styles
+   ============================================ */
+.markdown-body {
+  line-height: 1.8;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  font-weight: 900;
+  font-family: var(--font-display);
+  color: var(--foreground);
+}
+
+.markdown-body h1 {
+  font-size: var(--text-3xl);
+  border-bottom: 4px solid var(--border);
+  padding-bottom: 0.3em;
+}
+.markdown-body h2 {
+  font-size: var(--text-2xl);
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0.2em;
+}
+.markdown-body h3 {
+  font-size: var(--text-xl);
+}
+.markdown-body h4 {
+  font-size: var(--text-lg);
+}
+
+.markdown-body p {
+  margin: 0.75em 0;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 1.5em;
+  margin: 0.75em 0;
+}
+
+.markdown-body ul {
+  list-style-type: disc;
+}
+.markdown-body ol {
+  list-style-type: decimal;
+}
+
+.markdown-body li {
+  margin: 0.25em 0;
+}
+
+.markdown-body li > ul,
+.markdown-body li > ol {
+  margin: 0.25em 0;
+}
+
+.markdown-body .katex-display {
+  margin: 1em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.markdown-body .katex {
+  font-size: 1.1em;
+}
+
+/* Compact mode for summaries / descriptions */
+.markdown-compact h1,
+.markdown-compact h2,
+.markdown-compact h3,
+.markdown-compact h4 {
+  margin-top: 0.5em;
+  margin-bottom: 0.25em;
+  font-size: inherit;
+  border: none;
+  padding: 0;
+}
+
+.markdown-compact p {
+  margin: 0.25em 0;
+}
